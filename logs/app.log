@@ -1,0 +1,7 @@
+2026-07-05T18:12:17.528Z [LOG] Request: GET /health | Query: {} | Body: undefined | Status: 200 | Duration: 30ms []
+2026-07-05T18:12:17.679Z [LOG] Request: POST /auth/signup | Query: {} | Body: {"login":"alex@test.com","password":"secret123"} | Status: 201 | Duration: 113ms []
+2026-07-05T18:12:17.756Z [LOG] Request: POST /auth/login | Query: {} | Body: {"login":"alex@test.com","password":"secret123"} | Status: 200 | Duration: 68ms []
+2026-07-05T18:12:17.765Z [LOG] Request: GET /rooms | Query: {} | Body: undefined | Status: 401 | Duration: 1ms []
+2026-07-05T18:24:52.159Z [LOG] Request: POST /auth/login | Query: {} | Body: {"login":"alex@test.com","password":"secret123"} | Status: 200 | Duration: 148ms []
+2026-07-05T18:24:52.184Z [LOG] Request: GET /rooms | Query: {} | Body: undefined | Status: 200 | Duration: 6ms []
+2026-07-05T18:24:52.198Z [LOG] Request: POST /rooms | Query: {} | Body: {"name":"Test room","adminId":"74722c80-e83c-483d-b8b1-cae4a51dd262"} | Status: 201 | Duration: 6ms []

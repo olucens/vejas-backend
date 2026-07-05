@@ -6,20 +6,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoomsModule = void 0;
+exports.RoomModule = void 0;
 const common_1 = require("@nestjs/common");
-const auth_module_1 = require("../auth/auth.module");
 const rooms_controller_1 = require("./rooms.controller");
-const rooms_gateway_1 = require("./rooms.gateway");
 const rooms_service_1 = require("./rooms.service");
-let RoomsModule = class RoomsModule {
+const prisma_module_1 = require("../prisma/prisma.module");
+const rooms_repository_1 = require("./rooms.repository");
+let RoomModule = class RoomModule {
 };
-exports.RoomsModule = RoomsModule;
-exports.RoomsModule = RoomsModule = __decorate([
+exports.RoomModule = RoomModule;
+exports.RoomModule = RoomModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule],
-        controllers: [rooms_controller_1.RoomsController],
-        providers: [rooms_service_1.RoomsService, rooms_gateway_1.RoomsGateway],
+        imports: [prisma_module_1.PrismaModule],
+        controllers: [rooms_controller_1.RoomController],
+        providers: [
+            {
+                provide: 'ROOM_REPOSITORY',
+                useClass: rooms_repository_1.PrismaRoomRepository,
+            },
+            rooms_service_1.RoomService,
+        ],
+        exports: [rooms_service_1.RoomService],
     })
-], RoomsModule);
+], RoomModule);
 //# sourceMappingURL=rooms.module.js.map

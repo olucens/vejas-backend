@@ -1,44 +1,56 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  HttpCode,
-  Param,
   Post,
-  UseGuards,
+  Put,
+  Delete,
+  Body,
+  Param,
+  ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import type { AuthUser } from '../auth/auth-user.interface';
-import { CurrentUser } from '../auth/current-user.decorator';
-import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
-import { CreateRoomDto } from './dto/create-room.dto';
-import type { Room, RoomWithState } from './room.types';
-import { RoomsService } from './rooms.service';
+import { RoomService } from './rooms.service';
+import { CreateRoomDto } from './dto/create-rooms.dto';
+import { UpdateRoomDto } from './dto/update-rooms.dto';
 
 @Controller('rooms')
-export class RoomsController {
-  constructor(private readonly rooms: RoomsService) {}
+export class RoomController {
+  constructor(private readonly roomsService: RoomService) {}
 
   @Get()
-  list(): Room[] {
-    return this.rooms.list();
+  async findAll() {
+    return this.roomsService.findAll();
   }
 
   @Get(':id')
-  get(@Param('id') id: string): RoomWithState {
-    return this.rooms.getWithState(id);
+  async findOne(
+    @Param('id') id: string,
+  ) {
+    return this.roomsService.findOne(id);
   }
 
   @Post()
-  @UseGuards(SupabaseAuthGuard)
-  create(@Body() dto: CreateRoomDto, @CurrentUser() user: AuthUser): Room {
-    return this.rooms.create(dto, user);
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body() dto: CreateRoomDto,
+  ) {
+    return this.roomsService.create(dto);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateRoomDto,
+  ) {
+    return this.roomsService.update(id, dto);
   }
 
   @Delete(':id')
-  @HttpCode(204)
-  @UseGuards(SupabaseAuthGuard)
-  delete(@Param('id') id: string, @CurrentUser() user: AuthUser): void {
-    this.rooms.delete(id, user);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Param('id') id: string,
+  ) {
+    return this.roomsService.remove(id);
   }
 }

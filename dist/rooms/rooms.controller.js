@@ -12,65 +12,71 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoomsController = void 0;
+exports.RoomController = void 0;
 const common_1 = require("@nestjs/common");
-const current_user_decorator_1 = require("../auth/current-user.decorator");
-const supabase_auth_guard_1 = require("../auth/supabase-auth.guard");
-const create_room_dto_1 = require("./dto/create-room.dto");
 const rooms_service_1 = require("./rooms.service");
-let RoomsController = class RoomsController {
-    rooms;
-    constructor(rooms) {
-        this.rooms = rooms;
+const create_rooms_dto_1 = require("./dto/create-rooms.dto");
+const update_rooms_dto_1 = require("./dto/update-rooms.dto");
+let RoomController = class RoomController {
+    constructor(roomsService) {
+        this.roomsService = roomsService;
     }
-    list() {
-        return this.rooms.list();
+    async findAll() {
+        return this.roomsService.findAll();
     }
-    get(id) {
-        return this.rooms.getWithState(id);
+    async findOne(id) {
+        return this.roomsService.findOne(id);
     }
-    create(dto, user) {
-        return this.rooms.create(dto, user);
+    async create(dto) {
+        return this.roomsService.create(dto);
     }
-    delete(id, user) {
-        this.rooms.delete(id, user);
+    async update(id, dto) {
+        return this.roomsService.update(id, dto);
+    }
+    async remove(id) {
+        return this.roomsService.remove(id);
     }
 };
-exports.RoomsController = RoomsController;
+exports.RoomController = RoomController;
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Array)
-], RoomsController.prototype, "list", null);
+    __metadata("design:returntype", Promise)
+], RoomController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Object)
-], RoomsController.prototype, "get", null);
+    __metadata("design:returntype", Promise)
+], RoomController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(supabase_auth_guard_1.SupabaseAuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_room_dto_1.CreateRoomDto, Object]),
-    __metadata("design:returntype", Object)
-], RoomsController.prototype, "create", null);
+    __metadata("design:paramtypes", [create_rooms_dto_1.CreateRoomDto]),
+    __metadata("design:returntype", Promise)
+], RoomController.prototype, "create", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_rooms_dto_1.UpdateRoomDto]),
+    __metadata("design:returntype", Promise)
+], RoomController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.HttpCode)(204),
-    (0, common_1.UseGuards)(supabase_auth_guard_1.SupabaseAuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
-], RoomsController.prototype, "delete", null);
-exports.RoomsController = RoomsController = __decorate([
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RoomController.prototype, "remove", null);
+exports.RoomController = RoomController = __decorate([
     (0, common_1.Controller)('rooms'),
-    __metadata("design:paramtypes", [rooms_service_1.RoomsService])
-], RoomsController);
+    __metadata("design:paramtypes", [rooms_service_1.RoomService])
+], RoomController);
 //# sourceMappingURL=rooms.controller.js.map

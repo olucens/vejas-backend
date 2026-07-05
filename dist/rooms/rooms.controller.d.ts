@@ -1,12 +1,12 @@
-import type { AuthUser } from '../auth/auth-user.interface';
-import { CreateRoomDto } from './dto/create-room.dto';
-import type { Room, RoomWithState } from './room.types';
-import { RoomsService } from './rooms.service';
-export declare class RoomsController {
-    private readonly rooms;
-    constructor(rooms: RoomsService);
-    list(): Room[];
-    get(id: string): RoomWithState;
-    create(dto: CreateRoomDto, user: AuthUser): Room;
-    delete(id: string, user: AuthUser): void;
+import { RoomService } from './rooms.service';
+import { CreateRoomDto } from './dto/create-rooms.dto';
+import { UpdateRoomDto } from './dto/update-rooms.dto';
+export declare class RoomController {
+    private readonly roomsService;
+    constructor(roomsService: RoomService);
+    findAll(): Promise<import("./entities/rooms.entity").Room[]>;
+    findOne(id: string): Promise<import("./entities/rooms.entity").Room>;
+    create(dto: CreateRoomDto): Promise<import("./entities/rooms.entity").Room>;
+    update(id: string, dto: UpdateRoomDto): Promise<import("./entities/rooms.entity").Room>;
+    remove(id: string): Promise<void>;
 }

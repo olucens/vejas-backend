@@ -31,7 +31,11 @@ interface SocketData {
 
 type RoomSocket = Socket & { data: SocketData };
 
-@WebSocketGateway({ cors: { origin: process.env.CORS_ORIGIN ?? '*' } })
+@WebSocketGateway({
+  cors: {
+    origin: process.env.CORS_ORIGIN?.split(',').map((o) => o.trim()) ?? '*',
+  },
+})
 export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

@@ -10,7 +10,10 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({ origin: process.env.CORS_ORIGIN ?? '*' });
+  // Comma-separated list, e.g. "https://team.github.io,http://localhost:4200".
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN?.split(',').map((o) => o.trim()) ?? '*',
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

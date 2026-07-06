@@ -39,7 +39,7 @@ describe('RoomService', () => {
   };
 
   const mockUserService = {
-    getById: jest.fn().mockResolvedValue({ login: 'alex@test.com' }),
+    getById: jest.fn().mockResolvedValue({ login: 'alex@test.com', nickname: null }),
   };
 
   beforeEach(async () => {
@@ -55,7 +55,7 @@ describe('RoomService', () => {
     service = module.get<RoomService>(RoomService);
     jest.clearAllMocks();
     mockRoomState.getViewersCount.mockResolvedValue(3);
-    mockUserService.getById.mockResolvedValue({ login: 'alex@test.com' });
+    mockUserService.getById.mockResolvedValue({ login: 'alex@test.com', nickname: null });
   });
 
   it('should be defined', () => {
@@ -69,9 +69,34 @@ describe('RoomService', () => {
       const result = await service.findAll();
 
       expect(result).toHaveLength(1);
-      expect(result[0].adminName).toBe('alex@test.com');
+      // Never leak the full email: the login prefix is used when
+      // no nickname is set.
+      expect(result[0].adminName).toBe('alex');
       expect(result[0].viewersCount).toBe(3);
       expect(result[0].description).toBe('');
+    });
+
+    it('prefers the nickname over the login for adminName', async () => {
+      mockRepository.findAll.mockResolvedValue([mockRoom]);
+      mockUserService.getById.mockResolvedValue({
+        login: 'alex@test.com',
+        nickname: 'CoolAlex',
+      });
+
+      const result = await service.findAll();
+      expect(result[0].adminName).toBe('CoolAlex');
+    });
+
+    it('filters rooms by adminId when provided', async () => {
+      mockRepository.findAll.mockResolvedValue([
+        mockRoom,
+        { ...mockRoom, id: 'other', adminId: 'someone-else' },
+      ]);
+
+      const result = await service.findAll(ADMIN_ID);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].adminId).toBe(ADMIN_ID);
     });
 
     it('falls back to Unknown when the admin user is gone', async () => {

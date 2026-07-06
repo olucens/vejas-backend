@@ -2,6 +2,7 @@ import {
   User,
   CreateUserDto,
   UpdatePasswordDto,
+  UpdateProfileDto,
 } from '../../user/dto/user.dto';
 
 export interface IUserRepository {
@@ -10,5 +11,6 @@ export interface IUserRepository {
   getByLogin(login: string): Promise<User | undefined>;
   create(data: CreateUserDto): Promise<User>;
   update(id: string, data: UpdatePasswordDto): Promise<User | undefined>;
+  updateProfile(id: string, data: UpdateProfileDto): Promise<User | undefined>;
   delete(id: string): Promise<boolean>;
 }

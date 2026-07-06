@@ -61,6 +61,13 @@ let UserService = class UserService {
         }
         return (0, class_transformer_1.plainToInstance)(user_dto_1.UserResponse, uUser);
     }
+    async updateProfile(id, data) {
+        const user = await this.repository.updateProfile(id, data);
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        return (0, class_transformer_1.plainToInstance)(user_dto_1.UserResponse, user);
+    }
     async delete(id) {
         const user = await this.repository.getById(id);
         if (user === undefined) {

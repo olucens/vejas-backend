@@ -36,11 +36,13 @@ export class RoomService {
     private readonly userService: UserService,
   ) {}
 
-  async findAll(): Promise<ApiRoom[]> {
+  async findAll(adminId?: string): Promise<ApiRoom[]> {
     const rooms = await this.repository.findAll();
-    const sorted = rooms.sort(
-      (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0),
-    );
+    const sorted = rooms
+      .filter((room) => !adminId || room.adminId === adminId)
+      .sort(
+        (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0),
+      );
     return Promise.all(sorted.map((room) => this.toApiRoom(room)));
   }
 
@@ -101,7 +103,8 @@ export class RoomService {
     const [adminName, viewersCount] = await Promise.all([
       this.userService
         .getById(room.adminId)
-        .then((user) => user.login)
+        // Prefer the chosen nickname; never leak the full email login.
+        .then((user) => user.nickname ?? user.login.split('@')[0])
         .catch(() => 'Unknown'),
       this.roomState.getViewersCount(room.id),
     ]);

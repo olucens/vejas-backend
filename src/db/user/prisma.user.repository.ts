@@ -5,6 +5,7 @@ import {
   CreateUserDto,
   User as DomainUser,
   UpdatePasswordDto,
+  UpdateProfileDto,
 } from '../../user/dto/user.dto';
 import { User as PrismaUser } from '@prisma/client';
 
@@ -57,6 +58,25 @@ export class PrismaUserRepository implements IUserRepository {
     }
   }
 
+  async updateProfile(
+    id: string,
+    data: UpdateProfileDto,
+  ): Promise<DomainUser | undefined> {
+    try {
+      const user = await this.prisma.user.update({
+        where: { id },
+        data: {
+          ...(data.nickname !== undefined ? { nickname: data.nickname } : {}),
+          ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
+          version: { increment: 1 },
+        },
+      });
+      return this.mapToDomain(user);
+    } catch {
+      return undefined;
+    }
+  }
+
   async delete(id: string): Promise<boolean> {
     try {
       await this.prisma.user.delete({ where: { id } });
@@ -71,6 +91,8 @@ export class PrismaUserRepository implements IUserRepository {
       id: user.id,
       login: user.login,
       password: user.password,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl,
       roles: user.roles || ['user'],
       version: user.version,
       createdAt: user.createdAt.getTime(),

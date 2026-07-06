@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -22,8 +23,8 @@ export class RoomController {
 
   @Public()
   @Get()
-  async findAll(): Promise<ApiRoom[]> {
-    return this.roomsService.findAll();
+  async findAll(@Query('adminId') adminId?: string): Promise<ApiRoom[]> {
+    return this.roomsService.findAll(adminId);
   }
 
   @Public()

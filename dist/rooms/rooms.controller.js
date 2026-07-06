@@ -23,8 +23,8 @@ let RoomController = class RoomController {
     constructor(roomsService) {
         this.roomsService = roomsService;
     }
-    async findAll() {
-        return this.roomsService.findAll();
+    async findAll(adminId) {
+        return this.roomsService.findAll(adminId);
     }
     async findOne(id) {
         return this.roomsService.findOneWithState(id);
@@ -43,8 +43,9 @@ exports.RoomController = RoomController;
 __decorate([
     (0, public_decorator_1.Public)(),
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('adminId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], RoomController.prototype, "findAll", null);
 __decorate([

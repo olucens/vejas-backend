@@ -54,6 +54,22 @@ let PrismaUserRepository = class PrismaUserRepository {
             return undefined;
         }
     }
+    async updateProfile(id, data) {
+        try {
+            const user = await this.prisma.user.update({
+                where: { id },
+                data: {
+                    ...(data.nickname !== undefined ? { nickname: data.nickname } : {}),
+                    ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
+                    version: { increment: 1 },
+                },
+            });
+            return this.mapToDomain(user);
+        }
+        catch {
+            return undefined;
+        }
+    }
     async delete(id) {
         try {
             await this.prisma.user.delete({ where: { id } });
@@ -68,6 +84,8 @@ let PrismaUserRepository = class PrismaUserRepository {
             id: user.id,
             login: user.login,
             password: user.password,
+            nickname: user.nickname,
+            avatarUrl: user.avatarUrl,
             roles: user.roles || ['user'],
             version: user.version,
             createdAt: user.createdAt.getTime(),

@@ -9,6 +9,7 @@ import { comparePassword, hashPassword } from '../crypto/hashPassword';
 import { IUserRepository } from '../db/user/user.repository.interface';
 import {
   CreateUserDto,
+  UpdateProfileDto,
   UserResponse,
   UpdatePasswordDto,
   User,
@@ -63,6 +64,14 @@ export class UserService {
       throw new NotFoundException('User not found during update');
     }
     return plainToInstance(UserResponse, uUser);
+  }
+
+  async updateProfile(id: string, data: UpdateProfileDto) {
+    const user = await this.repository.updateProfile(id, data);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return plainToInstance(UserResponse, user);
   }
 
   async delete(id: string) {

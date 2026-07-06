@@ -22,9 +22,11 @@ let RoomService = class RoomService {
         this.roomState = roomState;
         this.userService = userService;
     }
-    async findAll() {
+    async findAll(adminId) {
         const rooms = await this.repository.findAll();
-        const sorted = rooms.sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
+        const sorted = rooms
+            .filter((room) => !adminId || room.adminId === adminId)
+            .sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
         return Promise.all(sorted.map((room) => this.toApiRoom(room)));
     }
     async findOne(id) {
@@ -72,7 +74,7 @@ let RoomService = class RoomService {
         const [adminName, viewersCount] = await Promise.all([
             this.userService
                 .getById(room.adminId)
-                .then((user) => user.login)
+                .then((user) => user.nickname ?? user.login.split('@')[0])
                 .catch(() => 'Unknown'),
             this.roomState.getViewersCount(room.id),
         ]);

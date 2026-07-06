@@ -16,6 +16,7 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_dto_1 = require("./dto/user.dto");
 const user_service_1 = require("./user.service");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const public_decorator_1 = require("../auth/decorators/public.decorator");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let UserController = class UserController {
@@ -24,6 +25,12 @@ let UserController = class UserController {
     }
     getAllUsers() {
         return this.userService.getAll();
+    }
+    getMe(user) {
+        return this.userService.getById(user.userId);
+    }
+    updateMe(user, body) {
+        return this.userService.updateProfile(user.userId, body);
     }
     getUserById(id) {
         return this.userService.getById(id);
@@ -46,6 +53,23 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "getAllUsers", null);
+__decorate([
+    (0, common_1.Get)('me'),
+    (0, roles_decorator_1.Roles)('admin', 'user'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.Patch)('me'),
+    (0, roles_decorator_1.Roles)('admin', 'user'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, user_dto_1.UpdateProfileDto]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)('admin', 'user'),

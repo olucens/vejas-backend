@@ -22,7 +22,7 @@ export declare class RoomService {
     private readonly roomState;
     private readonly userService;
     constructor(repository: IRoomRepository, roomState: RoomStateService, userService: UserService);
-    findAll(): Promise<ApiRoom[]>;
+    findAll(adminId?: string): Promise<ApiRoom[]>;
     findOne(id: string): Promise<ApiRoom>;
     findOneWithState(id: string): Promise<ApiRoomWithState>;
     create(dto: CreateRoomDto, adminId: string): Promise<ApiRoom>;

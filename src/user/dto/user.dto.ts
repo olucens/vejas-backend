@@ -2,7 +2,9 @@ import { Exclude } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
+  IsUrl,
   IsUUID,
   MaxLength,
   Min,
@@ -13,6 +15,8 @@ export interface User {
   id: string;
   login: string;
   password: string;
+  nickname: string | null;
+  avatarUrl: string | null;
   roles: string[];
   version: number;
   createdAt: number;
@@ -29,6 +33,18 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+}
+
+export class UpdateProfileDto {
+  @IsString()
+  @MinLength(2)
+  @MaxLength(30)
+  @IsOptional()
+  nickname?: string;
+
+  @IsUrl()
+  @IsOptional()
+  avatarUrl?: string;
 }
 
 export class UpdatePasswordDto {
@@ -49,6 +65,10 @@ export class UserResponse {
   @IsNotEmpty()
   @IsString()
   login: string;
+
+  nickname: string | null;
+
+  avatarUrl: string | null;
 
   @IsNotEmpty()
   roles: string[];

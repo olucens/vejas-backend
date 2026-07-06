@@ -13,6 +13,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { RoomService } from './rooms.service';
 import { RoomStateService } from './room-state.service';
+import { UserService } from '../user/user.service';
 import type {
   ChatMessagePayload,
   JoinRoomPayload,
@@ -41,6 +42,7 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly rooms: RoomService,
     private readonly roomState: RoomStateService,
     private readonly jwtService: JwtService,
+    private readonly users: UserService,
   ) {}
 
   async handleConnection(client: RoomSocket): Promise<void> {
@@ -91,6 +93,17 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit('roomState', { ...room, state });
   }
 
+  @SubscribeMessage('leaveRoom')
+  async onLeaveRoom(
+    @ConnectedSocket() client: RoomSocket,
+    @MessageBody() { roomId }: JoinRoomPayload,
+  ): Promise<void> {
+    if (client.data.roomId !== roomId) return;
+    client.data.roomId = undefined;
+    await client.leave(roomId);
+    await this.broadcastViewersCount(roomId);
+  }
+
   @SubscribeMessage('playbackUpdate')
   async onPlaybackUpdate(
     @ConnectedSocket() client: RoomSocket,
@@ -110,7 +123,12 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!text?.trim()) return;
 
     const { userId, login } = client.data.user;
-    const message = await this.roomState.addMessage(roomId, userId, login, text);
+    const author = await this.users
+      .getById(userId)
+      .then((user) => user.nickname ?? user.login.split('@')[0])
+      .catch(() => login.split('@')[0]);
+
+    const message = await this.roomState.addMessage(roomId, userId, author, text);
     this.server.to(roomId).emit('chatMessage', message);
   }
 

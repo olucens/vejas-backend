@@ -87,10 +87,14 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     client.data.roomId = roomId;
     await client.join(roomId);
-    await this.broadcastViewersCount(roomId);
 
+    // Snapshot first, fresh count after: the snapshot's viewersCount was
+    // read before this client joined, so the broadcast must arrive later
+    // or the joiner overwrites the live number with a stale one.
     const state = await this.roomState.getState(roomId);
     client.emit('roomState', { ...room, state });
+
+    await this.broadcastViewersCount(roomId);
   }
 
   @SubscribeMessage('leaveRoom')

@@ -13,6 +13,7 @@ const mockRoom: Room = {
   description: undefined,
   coverUrl: undefined,
   adminId: ADMIN_ID,
+  allowGuestControl: false,
   createdAt: new Date('2026-07-06T10:00:00.000Z'),
 };
 

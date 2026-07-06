@@ -4,5 +4,6 @@ export interface Room {
   description?: string;
   coverUrl?: string;
   adminId: string;
+  allowGuestControl: boolean;
   createdAt?: Date;
 }

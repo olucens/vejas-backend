@@ -56,6 +56,7 @@ export class PrismaRoomRepository implements IRoomRepository {
       description: (item as any).description,
       coverUrl: (item as any).coverUrl,
       adminId: (item as any).adminId,
+      allowGuestControl: (item as any).allowGuestControl ?? false,
       createdAt: (item as any).createdAt,
     };
   }

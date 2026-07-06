@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUrl, Length } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreateRoomDto {
   @IsString()
@@ -13,4 +13,8 @@ export class CreateRoomDto {
   @IsOptional()
   @IsUrl()
   coverUrl?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  allowGuestControl?: boolean;
 }

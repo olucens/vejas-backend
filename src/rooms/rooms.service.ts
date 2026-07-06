@@ -19,6 +19,7 @@ export interface ApiRoom {
   coverUrl: string | null;
   adminId: string;
   adminName: string;
+  allowGuestControl: boolean;
   createdAt: string | null;
   viewersCount: number;
 }
@@ -116,6 +117,7 @@ export class RoomService {
       coverUrl: room.coverUrl ?? null,
       adminId: room.adminId,
       adminName,
+      allowGuestControl: room.allowGuestControl,
       createdAt: room.createdAt?.toISOString() ?? null,
       viewersCount,
     };

@@ -30,6 +30,7 @@ model Room {
   description String?
   coverUrl    String?   @map("cover_url")
   adminId     String    @map("admin_id")
+  allowGuestControl Boolean @default(false) @map("allow_guest_control")
   createdAt   DateTime? @default(now()) @map("created_at")
 
   @@map("rooms")

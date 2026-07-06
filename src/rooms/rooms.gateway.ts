@@ -109,7 +109,7 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: RoomSocket,
     @MessageBody() { roomId, isPlaying, currentTime }: PlaybackUpdatePayload,
   ): Promise<void> {
-    await this.assertAdmin(client, roomId);
+    await this.assertCanControlPlayback(client, roomId);
     await this.roomState.setPlayback(roomId, isPlaying, currentTime);
     client.to(roomId).emit('playbackUpdate', { isPlaying, currentTime });
   }
@@ -173,6 +173,23 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room = await this.rooms.findOne(roomId).catch(() => null);
     if (room?.adminId !== client.data.user.userId) {
       throw new WsException('Only the room admin can do this');
+    }
+  }
+
+  /** Playback is open to everyone when the room was created with
+   *  "allow guest control"; the playlist always stays admin-only. */
+  private async assertCanControlPlayback(
+    client: RoomSocket,
+    roomId: string,
+  ): Promise<void> {
+    this.assertMember(client, roomId);
+    const room = await this.rooms.findOne(roomId).catch(() => null);
+    if (!room) {
+      throw new WsException(`Room ${roomId} not found`);
+    }
+    if (room.allowGuestControl) return;
+    if (room.adminId !== client.data.user.userId) {
+      throw new WsException('Only the room admin can control playback');
     }
   }
 

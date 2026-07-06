@@ -1,15 +1,22 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# Environment — secrets never go to git (.env.example is the template and IS tracked)
+.env
+.env.*
+!.env.example
 
 # Compiled output
 /dist
 /tmp
 /out-tsc
-/bazel-out
+/coverage
 
 # Node
 /node_modules
 npm-debug.log
 yarn-error.log
+
+# Logs
+/logs
+*.log
 
 # IDEs and editors
 .idea/
@@ -19,26 +26,15 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
-
-# Visual Studio Code
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-!.vscode/mcp.json
-.history/*
-
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-__screenshots__/
 
 # System files
 .DS_Store
 Thumbs.db
+
+# NOTE: prisma/migrations MUST stay in git — the database cannot be
+# reproduced on a server without them.

@@ -28,8 +28,12 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
 COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+# Prisma CLI is a devDependency, so it is not in the production install —
+# copy it from the builder to run "migrate deploy" against a fresh database.
+COPY --from=builder /usr/src/app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /usr/src/app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
 ENV PORT=4000
 EXPOSE ${PORT}
 
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/main"]

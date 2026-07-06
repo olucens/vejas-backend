@@ -15,28 +15,19 @@ class CreateRoomDto {
 }
 exports.CreateRoomDto = CreateRoomDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Length)(3, 60),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Length)(0, 300),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "coverUrl", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateRoomDto.prototype, "adminId", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", Date)
-], CreateRoomDto.prototype, "createdAt", void 0);
 //# sourceMappingURL=create-rooms.dto.js.map

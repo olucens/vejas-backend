@@ -77,18 +77,15 @@ describe('AuthService', () => {
         login: 'newuser',
         password: 'password123',
       };
-      const hashedPassword = 'hashedpassword123';
       const createdUser = { id: '1', login: createDto.login };
 
-      (hashPassword as jest.Mock).mockResolvedValue(hashedPassword);
       userService.create.mockResolvedValue(createdUser as any);
 
       const result = await service.signup(createDto);
 
-      expect(userService.create).toHaveBeenCalledWith({
-        login: createDto.login,
-        password: hashedPassword,
-      });
+      // Hashing happens inside UserService.create (covered by its own spec);
+      // signup just delegates the dto.
+      expect(userService.create).toHaveBeenCalledWith(createDto);
       expect(result).toEqual(createdUser);
     });
   });

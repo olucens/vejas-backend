@@ -14,41 +14,85 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoomService = void 0;
 const common_1 = require("@nestjs/common");
+const room_state_service_1 = require("./room-state.service");
+const user_service_1 = require("../user/user.service");
 let RoomService = class RoomService {
-    constructor(repository) {
+    constructor(repository, roomState, userService) {
         this.repository = repository;
+        this.roomState = roomState;
+        this.userService = userService;
     }
-    async findAll(parentId) {
-        return this.repository.findAll(parentId);
+    async findAll() {
+        const rooms = await this.repository.findAll();
+        const sorted = rooms.sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
+        return Promise.all(sorted.map((room) => this.toApiRoom(room)));
     }
     async findOne(id) {
         const item = await this.repository.findById(id);
         if (!item) {
             throw new common_1.NotFoundException(`Room with ID ${id} not found`);
         }
-        return item;
+        return this.toApiRoom(item);
     }
-    async create(createRoomDto, parentId) {
-        return this.repository.create(createRoomDto, parentId);
+    async findOneWithState(id) {
+        const room = await this.findOne(id);
+        const state = await this.roomState.getState(id);
+        return { ...room, state };
     }
-    async update(id, updateRoomDto) {
-        const item = await this.repository.update(id, updateRoomDto);
+    async create(dto, adminId) {
+        const room = await this.repository.create({ ...dto, adminId });
+        return this.toApiRoom(room);
+    }
+    async update(id, dto, requesterId) {
+        await this.assertAdmin(id, requesterId);
+        const item = await this.repository.update(id, dto);
         if (!item) {
             throw new common_1.NotFoundException(`Room with ID ${id} not found`);
         }
-        return item;
+        return this.toApiRoom(item);
     }
-    async remove(id) {
+    async remove(id, requesterId) {
+        await this.assertAdmin(id, requesterId);
         const deleted = await this.repository.delete(id);
         if (!deleted) {
             throw new common_1.NotFoundException(`Room with ID ${id} not found`);
         }
+        await this.roomState.clear(id);
+    }
+    async assertAdmin(roomId, userId) {
+        const room = await this.repository.findById(roomId);
+        if (!room) {
+            throw new common_1.NotFoundException(`Room with ID ${roomId} not found`);
+        }
+        if (room.adminId !== userId) {
+            throw new common_1.ForbiddenException('Only the room admin can do this');
+        }
+    }
+    async toApiRoom(room) {
+        const [adminName, viewersCount] = await Promise.all([
+            this.userService
+                .getById(room.adminId)
+                .then((user) => user.login)
+                .catch(() => 'Unknown'),
+            this.roomState.getViewersCount(room.id),
+        ]);
+        return {
+            id: room.id,
+            name: room.name,
+            description: room.description ?? '',
+            coverUrl: room.coverUrl ?? null,
+            adminId: room.adminId,
+            adminName,
+            createdAt: room.createdAt?.toISOString() ?? null,
+            viewersCount,
+        };
     }
 };
 exports.RoomService = RoomService;
 exports.RoomService = RoomService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('ROOM_REPOSITORY')),
-    __metadata("design:paramtypes", [Object])
+    __metadata("design:paramtypes", [Object, room_state_service_1.RoomStateService,
+        user_service_1.UserService])
 ], RoomService);
 //# sourceMappingURL=rooms.service.js.map

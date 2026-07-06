@@ -21,6 +21,7 @@ const roles_guard_1 = require("./auth/roles.guard");
 const logger_service_1 = require("./logger/logger.service");
 const logging_middleware_1 = require("./logger/logging.middleware");
 const rooms_module_1 = require("./rooms/rooms.module");
+const redis_module_1 = require("./redis/redis.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(logging_middleware_1.LoggingMiddleware).forRoutes('*');
@@ -40,6 +41,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             logger_module_1.LoggerModule,
+            redis_module_1.RedisModule,
             rooms_module_1.RoomModule
         ],
         controllers: [app_controller_1.AppController],

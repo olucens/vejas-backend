@@ -1,23 +1,16 @@
-import { IsNotEmpty, IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreateRoomDto {
-  @IsNotEmpty()
   @IsString()
+  @Length(3, 60)
   name: string;
 
   @IsOptional()
   @IsString()
+  @Length(0, 300)
   description?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   coverUrl?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  adminId: string;
-
-  @IsOptional()
-  @IsDateString()
-  createdAt?: Date;
 }

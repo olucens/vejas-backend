@@ -10,6 +10,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({ origin: process.env.CORS_ORIGIN ?? '*' });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

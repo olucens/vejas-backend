@@ -8,6 +8,7 @@ dotenv.config();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.enableCors({ origin: process.env.CORS_ORIGIN ?? '*' });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,

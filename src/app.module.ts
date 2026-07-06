@@ -12,6 +12,7 @@ import { RolesGuard } from "./auth/roles.guard";
 import { LoggerService } from "./logger/logger.service";
 import { LoggingMiddleware } from "./logger/logging.middleware";
 import { RoomModule } from "./rooms/rooms.module";
+import { RedisModule } from "./redis/redis.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RoomModule } from "./rooms/rooms.module";
         AuthModule,
         UserModule,
         LoggerModule,
+        RedisModule,
         RoomModule
     ],
   controllers: [AppController],

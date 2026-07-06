@@ -9,9 +9,9 @@ import { Room } from './entities/rooms.entity';
 export class PrismaRoomRepository implements IRoomRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(parentId?: string): Promise<Room[]> {
+  async findAll(adminId?: string): Promise<Room[]> {
     const items = await this.prisma.room.findMany(
-      (parentId ? { where: { parentId } } : {}) as any,
+      (adminId ? { where: { adminId } } : {}) as any,
     );
     return items.map((item) => this.mapToDomain(item));
   }
@@ -21,9 +21,9 @@ export class PrismaRoomRepository implements IRoomRepository {
     return item ? this.mapToDomain(item) : undefined;
   }
 
-  async create(data: CreateRoomDto, parentId?: string): Promise<Room> {
+  async create(data: CreateRoomDto, adminId?: string): Promise<Room> {
     const item = await this.prisma.room.create({
-      data: { ...data, ...(parentId ? { parentId } : {}) } as any,
+      data: { ...data, ...(adminId ? { adminId } : {}) } as any,
     });
     return this.mapToDomain(item);
   }
